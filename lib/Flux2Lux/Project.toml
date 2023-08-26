@@ -12,5 +12,5 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 [compat]
 Flux = "0.13"
 Lux = "0.4.26"
-Optimisers = "0.2"
+Optimisers = "0.2, 0.3"
 julia = "1.6"
