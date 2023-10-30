@@ -29,14 +29,21 @@ mean and variance.
     missing ingredient for fast stylization." arXiv preprint arXiv:1607.08022 (2016).
 """
 function instancenorm(x::AbstractArray{<:Real, N},
-                      scale::Union{AbstractVector{<:Real}, Nothing},
-                      bias::Union{AbstractVector{<:Real}, Nothing}; training::Val,
-                      epsilon::Real) where {N}
+        scale::Union{AbstractVector{<:Real}, Nothing},
+        bias::Union{AbstractVector{<:Real}, Nothing};
+        training::Val,
+        epsilon::Real) where {N}
     _test_valid_instancenorm_arguments(x)
 
-    x_, xm, xv = _normalization(x, nothing, nothing, scale, bias,
-                                _get_instancenorm_reduce_dims(x), training, zero(eltype(x)),
-                                epsilon)
+    x_, xm, xv = _normalization(x,
+        nothing,
+        nothing,
+        scale,
+        bias,
+        _get_instancenorm_reduce_dims(x),
+        training,
+        zero(eltype(x)),
+        epsilon)
 
     return x_, (; running_mean=xm, running_var=xv)
 end

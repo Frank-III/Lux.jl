@@ -1,7 +1,7 @@
 module LuxLib
 
-using ChainRulesCore, CUDA, CUDAKernels, KernelAbstractions, Markdown, NNlib, NNlibCUDA,
-      Random, Statistics
+using ChainRulesCore,
+    CUDA, CUDAKernels, KernelAbstractions, Markdown, NNlib, NNlibCUDA, Random, Statistics
 import ChainRulesCore as CRC
 
 include("utils.jl")

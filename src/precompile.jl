@@ -7,15 +7,19 @@ if Preferences.@load_preference("LuxSnoopPrecompile", true)
 
     LAYERS = [
         Chain(Chain(Dense(10 => 10, sigmoid), GroupNorm(10, 5; track_stats=false)),
-              Chain(Dense(10 => 5), BatchNorm(5, relu)), Dense(5 => 2, tanh), Dense(2 => 1);
-              disable_optimizations=true),
+            Chain(Dense(10 => 5), BatchNorm(5, relu)),
+            Dense(5 => 2, tanh),
+            Dense(2 => 1);
+            disable_optimizations=true),
         Chain(Chain(Conv((3, 3), 3 => 16, sigmoid), GroupNorm(16, 4; track_stats=false)),
-              Chain(Conv((3, 3), 16 => 8, relu), BatchNorm(8, relu)),
-              Conv((3, 3), 8 => 1, tanh); disable_optimizations=true),
+            Chain(Conv((3, 3), 16 => 8, relu), BatchNorm(8, relu)),
+            Conv((3, 3), 8 => 1, tanh);
+            disable_optimizations=true),
         Chain(Chain(Conv((3, 3), 3 => 16, sigmoid; pad=SamePad()),
-                    GroupNorm(16, 4; track_stats=false)),
-              Chain(Conv((3, 3), 16 => 8, relu; pad=SamePad()), BatchNorm(8, relu)),
-              Conv((3, 3), 8 => 1, tanh; pad=SamePad()); disable_optimizations=true),
+                GroupNorm(16, 4; track_stats=false)),
+            Chain(Conv((3, 3), 16 => 8, relu; pad=SamePad()), BatchNorm(8, relu)),
+            Conv((3, 3), 8 => 1, tanh; pad=SamePad());
+            disable_optimizations=true),
     ]
     X_SIZE = [(10, 2), (16, 16, 3, 2), (16, 16, 3, 2)]
 

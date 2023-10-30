@@ -66,7 +66,7 @@ include("../test_utils.jl")
     run_JET_tests(layer, x, ps, st)
 
     @testset "$ltype SamePad windowsize $k" for ltype in (MeanPool, MaxPool),
-                                                k in ((1,), (2,), (3,), (4, 5), (6, 7, 8))
+        k in ((1,), (2,), (3,), (4, 5), (6, 7, 8))
 
         x = ones(Float32, (k .+ 3)..., 1, 1)
 
@@ -89,8 +89,11 @@ end
         @test size(ps.weight) == (3, 3, 2)
         @test size(layer(x, ps, st)[1]) == (2, 2, 1)
         run_JET_tests(layer, x, ps, st; call_broken=true)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         x = rand(rng, Float32, 4, 4, 6, 1)
         layer = Conv((3, 3), 6 => 2; groups=2)
@@ -100,8 +103,11 @@ end
         @test size(ps.weight) == (3, 3, 3, 2)
         @test size(layer(x, ps, st)[1]) == (2, 2, 2, 1)
         run_JET_tests(layer, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         x = rand(rng, Float32, 4, 4, 4, 6, 1)
         layer = Conv((3, 3, 3), 6 => 2; groups=2)
@@ -111,8 +117,11 @@ end
         @test size(ps.weight) == (3, 3, 3, 3, 2)
         @test size(layer(x, ps, st)[1]) == (2, 2, 2, 2, 1)
         run_JET_tests(layer, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         # Test that we cannot ask for non-integer multiplication factors
         layer = Conv((2, 2), 3 => 10; groups=2)
@@ -146,8 +155,11 @@ end
 
     @testset "Variable BitWidth Parameters" begin
         # https://github.com/FluxML/Flux.jl/issues/1421
-        layer = Conv((5, 5), 10 => 20, identity; init_weight=Base.randn,
-                     init_bias=(rng, dims...) -> randn(rng, Float16, dims...))
+        layer = Conv((5, 5),
+            10 => 20,
+            identity;
+            init_weight=Base.randn,
+            init_bias=(rng, dims...) -> randn(rng, Float16, dims...))
         display(layer)
         ps, st = Lux.setup(rng, layer)
         @test ps.weight isa Array{Float64, 4}
@@ -164,8 +176,11 @@ end
 
         @test size(layer(x, ps, st)[1], 3) == 15
         run_JET_tests(layer, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         layer = Conv((2, 2), 3 => 9; groups=3)
         display(layer)
@@ -173,8 +188,11 @@ end
 
         @test size(layer(x, ps, st)[1], 3) == 9
         run_JET_tests(layer, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         layer = Conv((2, 2), 3 => 9; groups=3, use_bias=false)
         display(layer)
@@ -183,8 +201,11 @@ end
 
         @test size(layer(x, ps, st)[1], 3) == 9
         run_JET_tests(layer, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         # Test that we cannot ask for non-integer multiplication factors
         layer = Conv((2, 2), 3 => 10; groups=3)
@@ -201,8 +222,11 @@ end
 
         @test size(layer(x, ps, st)[1]) == size(x)
         run_JET_tests(layer, x, ps, st; call_broken=length(k) == 1)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         layer = Conv(k, 1 => 1; pad=Lux.SamePad(), dilation=k .÷ 2)
         display(layer)
@@ -210,8 +234,11 @@ end
 
         @test size(layer(x, ps, st)[1]) == size(x)
         run_JET_tests(layer, x, ps, st; call_broken=length(k) == 1)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         stride = 3
         layer = Conv(k, 1 => 1; pad=Lux.SamePad(), stride=stride)
@@ -220,8 +247,11 @@ end
 
         @test size(layer(x, ps, st)[1])[1:(end - 2)] == cld.(size(x)[1:(end - 2)], stride)
         run_JET_tests(layer, x, ps, st; call_broken=length(k) == 1)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
     end
 
     @testset "Conv with non quadratic window #700" begin
@@ -400,8 +430,11 @@ end
 
     @testset "Variable BitWidth Parameters" begin
         # https://github.com/FluxML/Flux.jl/issues/1421
-        layer = CrossCor((5, 5), 10 => 20, identity; init_weight=Base.randn,
-                         init_bias=(rng, dims...) -> randn(rng, Float16, dims...))
+        layer = CrossCor((5, 5),
+            10 => 20,
+            identity;
+            init_weight=Base.randn,
+            init_bias=(rng, dims...) -> randn(rng, Float16, dims...))
         display(layer)
         ps, st = Lux.setup(rng, layer)
         @test ps.weight isa Array{Float64, 4}
@@ -417,8 +450,11 @@ end
 
         @test size(layer(x, ps, st)[1]) == size(x)
         run_JET_tests(layer, x, ps, st; call_broken=length(k) == 1)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         layer = CrossCor(k, 1 => 1; pad=Lux.SamePad(), dilation=k .÷ 2)
         display(layer)
@@ -426,8 +462,11 @@ end
 
         @test size(layer(x, ps, st)[1]) == size(x)
         run_JET_tests(layer, x, ps, st; call_broken=length(k) == 1)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         stride = 3
         layer = CrossCor(k, 1 => 1; pad=Lux.SamePad(), stride=stride)
@@ -436,8 +475,11 @@ end
 
         @test size(layer(x, ps, st)[1])[1:(end - 2)] == cld.(size(x)[1:(end - 2)], stride)
         run_JET_tests(layer, x, ps, st; call_broken=length(k) == 1)
-        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
     end
 
     @testset "allow fast activation" begin
@@ -476,8 +518,11 @@ end
     x = rand(Float32, 5, 5, 1, 1)
     run_JET_tests(layer, x, ps, st; opt_broken=true)
     @inferred layer(x, ps, st)
-    test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps; atol=1.0f-3,
-                                  rtol=1.0f-3)
+    test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+        x,
+        ps;
+        atol=1.0f-3,
+        rtol=1.0f-3)
 
     x = rand(Float32, 5, 5, 2, 4)
     layer = ConvTranspose((3, 3), 2 => 3)
@@ -485,8 +530,11 @@ end
     ps, st = Lux.setup(rng, layer)
     run_JET_tests(layer, x, ps, st; opt_broken=true)
     @inferred layer(x, ps, st)
-    test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps; atol=1.0f-3,
-                                  rtol=1.0f-3)
+    test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+        x,
+        ps;
+        atol=1.0f-3,
+        rtol=1.0f-3)
 
     # test ConvTranspose supports groups argument
     x = randn(Float32, 10, 10, 2, 3)
@@ -502,10 +550,16 @@ end
     @test size(ps2.weight) == (3, 3, 2, 2)
     @test size(layer1(x, ps1, st1)[1]) == size(layer2(x, ps2, st2)[1])
 
-    test_gradient_correctness_fdm((x, ps) -> sum(layer1(x, ps, st1)[1]), x, ps1;
-                                  atol=1.0f-3, rtol=1.0f-3)
-    test_gradient_correctness_fdm((x, ps) -> sum(layer2(x, ps, st2)[1]), x, ps2;
-                                  atol=1.0f-3, rtol=1.0f-3)
+    test_gradient_correctness_fdm((x, ps) -> sum(layer1(x, ps, st1)[1]),
+        x,
+        ps1;
+        atol=1.0f-3,
+        rtol=1.0f-3)
+    test_gradient_correctness_fdm((x, ps) -> sum(layer2(x, ps, st2)[1]),
+        x,
+        ps2;
+        atol=1.0f-3,
+        rtol=1.0f-3)
 
     x = randn(Float32, 10, 2, 1)
     layer = ConvTranspose((3,), 2 => 4; pad=SamePad(), groups=2)
@@ -514,8 +568,11 @@ end
     run_JET_tests(layer, x, ps, st; opt_broken=true, call_broken=true)
     @test size(layer(x, ps, st)[1]) == (10, 4, 1)
     @test length(ps.weight) == 3 * (2 * 4) / 2
-    test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps; atol=1.0f-3,
-                                  rtol=1.0f-3)
+    test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+        x,
+        ps;
+        atol=1.0f-3,
+        rtol=1.0f-3)
 
     x = randn(Float32, 10, 11, 4, 2)
     layer = ConvTranspose((3, 5), 4 => 4; pad=SamePad(), groups=4)
@@ -524,8 +581,11 @@ end
     run_JET_tests(layer, x, ps, st; opt_broken=true)
     @test size(layer(x, ps, st)[1]) == (10, 11, 4, 2)
     @test length(ps.weight) == (3 * 5) * (4 * 4) / 4
-    test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps; atol=1.0f-3,
-                                  rtol=1.0f-3)
+    test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+        x,
+        ps;
+        atol=1.0f-3,
+        rtol=1.0f-3)
 
     x = randn(Float32, 10, 11, 4, 2)
     layer = ConvTranspose((3, 5), 4 => 4, tanh; pad=SamePad(), groups=4)
@@ -534,8 +594,11 @@ end
     run_JET_tests(layer, x, ps, st; opt_broken=true)
     @test size(layer(x, ps, st)[1]) == (10, 11, 4, 2)
     @test length(ps.weight) == (3 * 5) * (4 * 4) / 4
-    test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]), x, ps; atol=1.0f-3,
-                                  rtol=1.0f-3)
+    test_gradient_correctness_fdm((x, ps) -> sum(layer(x, ps, st)[1]),
+        x,
+        ps;
+        atol=1.0f-3,
+        rtol=1.0f-3)
 
     x = randn(Float32, 10, 11, 12, 3, 2)
     layer = ConvTranspose((3, 5, 3), 3 => 6; pad=SamePad(), groups=3)

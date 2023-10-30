@@ -38,18 +38,21 @@ end
 function test_abstract_vjp_interface()
     _, tstate, _, _, x = _get_TrainState()
 
-    Test.@testset "NotImplemented" begin for vjp_rule in (Lux.Training.EnzymeVJP(),
-                                                          Lux.Training.YotaVJP())
-        Test.@test_throws ArgumentError Lux.Training.compute_gradients(vjp_rule,
-                                                                       _loss_function, x,
-                                                                       tstate)
-    end end
+    Test.@testset "NotImplemented" begin
+        for vjp_rule in (Lux.Training.EnzymeVJP(), Lux.Training.YotaVJP())
+            Test.@test_throws ArgumentError Lux.Training.compute_gradients(vjp_rule,
+                _loss_function,
+                x,
+                tstate)
+        end
+    end
 
     # Gradient Correctness should be tested in `test/autodiff.jl` and other parts of the
     # testing codebase. Here we only test that the API works.
     grads, _, _, _ = Test.@test_nowarn Lux.Training.compute_gradients(Lux.Training.ZygoteVJP(),
-                                                                      _loss_function, x,
-                                                                      tstate)
+        _loss_function,
+        x,
+        tstate)
     tstate_ = Test.@test_nowarn Lux.Training.apply_gradients(tstate, grads)
     Test.@test tstate_.step == 1
     Test.@test tstate != tstate_
@@ -57,5 +60,9 @@ function test_abstract_vjp_interface()
     return nothing
 end
 
-Test.@testset "TrainState" begin test_TrainState_constructor() end
-Test.@testset "AbstractVJP" begin test_abstract_vjp_interface() end
+Test.@testset "TrainState" begin
+    test_TrainState_constructor()
+end
+Test.@testset "AbstractVJP" begin
+    test_abstract_vjp_interface()
+end

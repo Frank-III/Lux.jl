@@ -24,9 +24,17 @@ using Optimisers
 
 # LuxCore
 using LuxCore
-import LuxCore: AbstractExplicitLayer, AbstractExplicitContainerLayer, initialparameters,
-                initialstates, parameterlength, statelength, update_state, trainmode,
-                testmode, setup, apply
+import LuxCore: AbstractExplicitLayer,
+    AbstractExplicitContainerLayer,
+    initialparameters,
+    initialstates,
+    parameterlength,
+    statelength,
+    update_state,
+    trainmode,
+    testmode,
+    setup,
+    apply
 
 const use_cuda = Ref{Union{Nothing, Bool}}(nothing)
 
@@ -64,15 +72,26 @@ include("deprecated.jl")
 import SnoopPrecompile
 import Preferences
 
-SnoopPrecompile.@precompile_all_calls begin include("precompile.jl") end
+SnoopPrecompile.@precompile_all_calls begin
+    include("precompile.jl")
+end
 
 # Data Transfer
 export cpu, gpu
 # Layers
 export Chain, Parallel, SkipConnection, PairwiseFusion, BranchLayer, Maxout
 export Bilinear, Dense, Embedding, Scale
-export Conv, ConvTranspose, CrossCor, MaxPool, MeanPool, GlobalMaxPool, GlobalMeanPool,
-       AdaptiveMaxPool, AdaptiveMeanPool, Upsample, PixelShuffle
+export Conv,
+    ConvTranspose,
+    CrossCor,
+    MaxPool,
+    MeanPool,
+    GlobalMaxPool,
+    GlobalMeanPool,
+    AdaptiveMaxPool,
+    AdaptiveMeanPool,
+    Upsample,
+    PixelShuffle
 export AlphaDropout, Dropout, VariationalHiddenDropout
 export BatchNorm, GroupNorm, InstanceNorm, LayerNorm
 export WeightNorm

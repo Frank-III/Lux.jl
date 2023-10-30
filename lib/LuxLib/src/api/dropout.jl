@@ -32,34 +32,59 @@ Dropout: Simple Way to prevent Neural Networks for Overfitting. For details see 
 [1] Srivastava, Nitish, et al. "Dropout: a simple way to prevent neural networks from
     overfitting." The journal of machine learning research 15.1 (2014): 1929-1958.
 """
-function dropout(rng::AbstractRNG, x::AbstractArray, p::T, ::Val{true}; dims,
-                 invp::T=inv(p)) where {T}
+function dropout(rng::AbstractRNG,
+        x::AbstractArray,
+        p::T,
+        ::Val{true};
+        dims,
+        invp::T=inv(p)) where {T}
     rng = _replicate(rng)
     mask = _generate_dropout_mask(rng, x, p, invp; dims)
     return (x .* ignore_derivatives(mask), mask, rng)
 end
 
-function dropout(rng::AbstractRNG, x::AbstractArray, p::T, ::Val{false}; dims,
-                 invp::T=inv(p)) where {T}
+function dropout(rng::AbstractRNG,
+        x::AbstractArray,
+        p::T,
+        ::Val{false};
+        dims,
+        invp::T=inv(p)) where {T}
     return (x, x, rng)
 end
 
-function dropout(rng::AbstractRNG, x::AbstractArray, mask::AbstractArray, p::T, t::Val,
-                 ::Val{true}; dims, invp::T=inv(p)) where {T}
+function dropout(rng::AbstractRNG,
+        x::AbstractArray,
+        mask::AbstractArray,
+        p::T,
+        t::Val,
+        ::Val{true};
+        dims,
+        invp::T=inv(p)) where {T}
     return dropout(rng, x, p, t; dims, invp)
 end
 
-function dropout(rng::AbstractRNG, x::AbstractArray{T1, N}, mask::AbstractArray{T2, N},
-                 p::T, ::Val{true}, ::Val{false}; dims, invp::T=inv(p)) where {T, T1, T2, N}
+function dropout(rng::AbstractRNG,
+        x::AbstractArray{T1, N},
+        mask::AbstractArray{T2, N},
+        p::T,
+        ::Val{true},
+        ::Val{false};
+        dims,
+        invp::T=inv(p)) where {T, T1, T2, N}
     if size(x) != size(mask)
         return dropout(rng, x, p, Val(true); dims, invp)
     end
     return x .* ignore_derivatives(mask), mask, rng
 end
 
-function dropout(rng::AbstractRNG, x::AbstractArray{T1, N}, mask::AbstractArray{T2, N},
-                 p::T, ::Val{false}, ::Val{false}; dims,
-                 invp::T=inv(p)) where {T, T1, T2, N}
+function dropout(rng::AbstractRNG,
+        x::AbstractArray{T1, N},
+        mask::AbstractArray{T2, N},
+        p::T,
+        ::Val{false},
+        ::Val{false};
+        dims,
+        invp::T=inv(p)) where {T, T1, T2, N}
     return (x, mask, rng)
 end
 

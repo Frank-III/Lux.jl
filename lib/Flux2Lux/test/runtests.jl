@@ -80,54 +80,57 @@ using Flux2Lux, Lux, Random, Test
     end
 
     @testset "Linear" begin
-        @testset "Dense" begin for model in [
-            Flux.Dense(2 => 4),
-            Flux.Dense(2 => 4; bias=false),
-        ]
-            x = randn(Float32, 2, 4)
+        @testset "Dense" begin
+            for model in [Flux.Dense(2 => 4), Flux.Dense(2 => 4; bias=false)]
+                x = randn(Float32, 2, 4)
 
-            model_lux = transform(model; preserve_ps_st=true)
-            ps, st = Lux.setup(Random.default_rng(), model_lux)
+                model_lux = transform(model; preserve_ps_st=true)
+                ps, st = Lux.setup(Random.default_rng(), model_lux)
 
-            @test model(x) ≈ model_lux(x, ps, st)[1]
+                @test model(x) ≈ model_lux(x, ps, st)[1]
 
-            model_lux = transform(model)
-            ps, st = Lux.setup(Random.default_rng(), model_lux)
+                model_lux = transform(model)
+                ps, st = Lux.setup(Random.default_rng(), model_lux)
 
-            @test size(model_lux(x, ps, st)[1]) == size(model(x))
-        end end
+                @test size(model_lux(x, ps, st)[1]) == size(model(x))
+            end
+        end
 
-        @testset "Scale" begin for model in [Flux.Scale(2), Flux.Scale(2; bias=false)]
-            x = randn(Float32, 2, 4)
+        @testset "Scale" begin
+            for model in [Flux.Scale(2), Flux.Scale(2; bias=false)]
+                x = randn(Float32, 2, 4)
 
-            model_lux = transform(model; preserve_ps_st=true)
-            ps, st = Lux.setup(Random.default_rng(), model_lux)
+                model_lux = transform(model; preserve_ps_st=true)
+                ps, st = Lux.setup(Random.default_rng(), model_lux)
 
-            @test model(x) ≈ model_lux(x, ps, st)[1]
+                @test model(x) ≈ model_lux(x, ps, st)[1]
 
-            model_lux = transform(model)
-            ps, st = Lux.setup(Random.default_rng(), model_lux)
+                model_lux = transform(model)
+                ps, st = Lux.setup(Random.default_rng(), model_lux)
 
-            @test size(model_lux(x, ps, st)[1]) == size(model(x))
-        end end
+                @test size(model_lux(x, ps, st)[1]) == size(model(x))
+            end
+        end
 
-        @testset "Bilinear" begin for model in [
-            Flux.Bilinear((2, 3) => 5),
-            Flux.Bilinear((2, 3) => 5; bias=false),
-        ]
-            x = randn(Float32, 2, 4)
-            y = randn(Float32, 3, 4)
+        @testset "Bilinear" begin
+            for model in [
+                Flux.Bilinear((2, 3) => 5),
+                Flux.Bilinear((2, 3) => 5; bias=false),
+            ]
+                x = randn(Float32, 2, 4)
+                y = randn(Float32, 3, 4)
 
-            model_lux = transform(model; preserve_ps_st=true)
-            ps, st = Lux.setup(Random.default_rng(), model_lux)
+                model_lux = transform(model; preserve_ps_st=true)
+                ps, st = Lux.setup(Random.default_rng(), model_lux)
 
-            @test model(x, y) ≈ model_lux((x, y), ps, st)[1]
+                @test model(x, y) ≈ model_lux((x, y), ps, st)[1]
 
-            model_lux = transform(model)
-            ps, st = Lux.setup(Random.default_rng(), model_lux)
+                model_lux = transform(model)
+                ps, st = Lux.setup(Random.default_rng(), model_lux)
 
-            @test size(model_lux((x, y), ps, st)[1]) == size(model(x, y))
-        end end
+                @test size(model_lux((x, y), ps, st)[1]) == size(model(x, y))
+            end
+        end
 
         @testset "Embedding" begin
             model = Flux.Embedding(16 => 4)

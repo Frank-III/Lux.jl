@@ -4,12 +4,12 @@
 Freeze the parameters with name `which_params` of the layer `l`.
 
 !!! tip
-    
+
     It is always recommended to use the [`Lux.freeze`](@ref) function instead of directly
     using the `FrozenLayer` constructor.
 
 !!! warning
-    
+
     There are no checks for `which_params`. For example, if the original layer has
     parameters named `(:weight, :bias)``, and `which_params`is set to`(:myweight,)`
     then none of the parameters are frozen and no error is thrown.
@@ -55,7 +55,7 @@ struct FrozenLayer{which_params, L <: AbstractExplicitLayer} <: AbstractExplicit
     layer::L
 
     function FrozenLayer(l::AbstractExplicitLayer,
-                         which_params::Union{Tuple, Nothing}=nothing)
+            which_params::Union{Tuple, Nothing}=nothing)
         if which_params !== nothing && length(which_params) == 0
             @warn "Layer `FrozenLayer($l, (,))` is same as `l`, returning `l`."
             return l
@@ -65,7 +65,7 @@ struct FrozenLayer{which_params, L <: AbstractExplicitLayer} <: AbstractExplicit
 end
 
 function initialparameters(rng::AbstractRNG,
-                           l::FrozenLayer{which_params}) where {which_params}
+        l::FrozenLayer{which_params}) where {which_params}
     ps = initialparameters(rng, l.layer)
     ps_trainable = []
     for (k, v) in pairs(ps)
@@ -121,8 +121,10 @@ end
 Construct a [`Lux.FrozenLayer`](@ref) for `l` with the current parameters and states. If
 `which_params` is nothing, then all parameters are frozen.
 """
-function freeze(l::AbstractExplicitLayer, ps, st::NamedTuple,
-                which_params::Union{Tuple, Nothing}=nothing)
+function freeze(l::AbstractExplicitLayer,
+        ps,
+        st::NamedTuple,
+        which_params::Union{Tuple, Nothing}=nothing)
     fl = freeze(l, which_params)
     ps_frozen = []
     ps_trainable = []

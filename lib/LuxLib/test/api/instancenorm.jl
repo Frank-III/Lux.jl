@@ -38,24 +38,35 @@ _istraining(::Val{training}) where {training} = training
             if length(sz) != 3
                 @test isapprox(std(y; dims=1:(length(sz) - 2)), _target_std; atol=0.2)
             else
-                @test_broken isapprox(std(y; dims=1:(length(sz) - 2)), _target_std;
-                                      atol=0.2)
+                @test_broken isapprox(std(y; dims=1:(length(sz) - 2)),
+                    _target_std;
+                    atol=0.2)
             end
             @test std(y; dims=1:(length(sz) - 2)) != std(x; dims=1:(length(sz) - 2))
 
             Zygote.gradient(sum ∘ first ∘ _f, x, scale, bias)  # Compile
-            @time gs_x, gs_scale, gs_bias, = Zygote.gradient(sum ∘ first ∘ _f, x, scale,
-                                                             bias)
+            @time gs_x, gs_scale, gs_bias, = Zygote.gradient(sum ∘ first ∘ _f,
+                x,
+                scale,
+                bias)
 
             if T != Float16
                 if affine
-                    __f = (args...) -> sum(first(instancenorm(x, args...; epsilon,
-                                                              training)))
-                    test_gradient_correctness_fdm(__f, scale, bias; atol=1.0f-2,
-                                                  rtol=1.0f-2)
+                    __f = (args...) -> sum(first(instancenorm(x,
+                        args...;
+                        epsilon,
+                        training)))
+                    test_gradient_correctness_fdm(__f,
+                        scale,
+                        bias;
+                        atol=1.0f-2,
+                        rtol=1.0f-2)
                 else
-                    __f = (args...) -> sum(first(instancenorm(args..., scale, bias; epsilon,
-                                                              training)))
+                    __f = (args...) -> sum(first(instancenorm(args...,
+                        scale,
+                        bias;
+                        epsilon,
+                        training)))
                     test_gradient_correctness_fdm(__f, x; atol=1.0f-2, rtol=1.0f-2)
                 end
             end
@@ -91,17 +102,21 @@ _istraining(::Val{training}) where {training} = training
 
             _target_std = ones(ntuple(_ -> 1, length(sz) - 2)..., size(x)[(end - 1):end]...)
             if length(sz) != 3
-                @test isapprox(std(Array(y); dims=1:(length(sz) - 2)), _target_std;
-                               atol=0.2)
+                @test isapprox(std(Array(y); dims=1:(length(sz) - 2)),
+                    _target_std;
+                    atol=0.2)
             else
-                @test_broken isapprox(std(Array(y); dims=1:(length(sz) - 2)), _target_std;
-                                      atol=0.2)
+                @test_broken isapprox(std(Array(y); dims=1:(length(sz) - 2)),
+                    _target_std;
+                    atol=0.2)
             end
             @test std(Array(y); dims=1:(length(sz) - 2)) != std(x; dims=1:(length(sz) - 2))
 
             Zygote.gradient(sum ∘ first ∘ _f, x, scale, bias)  # Compile
-            @time gs_x, gs_scale, gs_bias, = Zygote.gradient(sum ∘ first ∘ _f, x, scale,
-                                                             bias)
+            @time gs_x, gs_scale, gs_bias, = Zygote.gradient(sum ∘ first ∘ _f,
+                x,
+                scale,
+                bias)
 
             # if T != Float16
             #     if affine

@@ -8,7 +8,7 @@ Random.seed!(rng, 0)
 @testset "BatchNorm" begin
     m = BatchNorm(2)
     x = [1.0f0 3.0f0 5.0f0
-         2.0f0 4.0f0 6.0f0]
+        2.0f0 4.0f0 6.0f0]
     display(m)
     ps, st = Lux.setup(rng, m)
 
@@ -49,8 +49,11 @@ Random.seed!(rng, 0)
 
     run_JET_tests(m, x, ps, st)
 
-    test_gradient_correctness_fdm((x, ps) -> sum(first(m(x, ps, st))), x, ps; atol=1.0f-3,
-                                  rtol=1.0f-3)
+    test_gradient_correctness_fdm((x, ps) -> sum(first(m(x, ps, st))),
+        x,
+        ps;
+        atol=1.0f-3,
+        rtol=1.0f-3)
 
     for affine in (true, false)
         m = BatchNorm(2; affine, track_stats=false)
@@ -61,33 +64,43 @@ Random.seed!(rng, 0)
         run_JET_tests(m, x, ps, st)
 
         if affine
-            test_gradient_correctness_fdm((x, ps) -> sum(first(m(x, ps, st))), x, ps;
-                                          atol=1.0f-3, rtol=1.0f-3)
+            test_gradient_correctness_fdm((x, ps) -> sum(first(m(x, ps, st))),
+                x,
+                ps;
+                atol=1.0f-3,
+                rtol=1.0f-3)
         else
-            test_gradient_correctness_fdm(x -> sum(first(m(x, ps, st))), x; atol=1.0f-3,
-                                          rtol=1.0f-3)
+            test_gradient_correctness_fdm(x -> sum(first(m(x, ps, st))),
+                x;
+                atol=1.0f-3,
+                rtol=1.0f-3)
         end
 
         # with activation function
         m = BatchNorm(2, sigmoid; affine)
         x = [1.0f0 3.0f0 5.0f0
-             2.0f0 4.0f0 6.0f0]
+            2.0f0 4.0f0 6.0f0]
         display(m)
         ps, st = Lux.setup(rng, m)
         st = Lux.testmode(st)
         y, st_ = m(x, ps, st)
         @test isapprox(y,
-                       sigmoid.((x .- st_.running_mean) ./
-                                sqrt.(st_.running_var .+ m.epsilon)), atol=1.0e-7)
+            sigmoid.((x .- st_.running_mean) ./ sqrt.(st_.running_var .+ m.epsilon)),
+            atol=1.0e-7)
         @inferred first(m(x, ps, st))
         run_JET_tests(m, x, ps, st)
 
         if affine
-            test_gradient_correctness_fdm((x, ps) -> sum(first(m(x, ps, st))), x, ps;
-                                          atol=1.0f-3, rtol=1.0f-3)
+            test_gradient_correctness_fdm((x, ps) -> sum(first(m(x, ps, st))),
+                x,
+                ps;
+                atol=1.0f-3,
+                rtol=1.0f-3)
         else
-            test_gradient_correctness_fdm(x -> sum(first(m(x, ps, st))), x; atol=1.0f-3,
-                                          rtol=1.0f-3)
+            test_gradient_correctness_fdm(x -> sum(first(m(x, ps, st))),
+                x;
+                atol=1.0f-3,
+                rtol=1.0f-3)
         end
 
         m = BatchNorm(32; affine)
@@ -167,8 +180,10 @@ end
 
     @inferred first(m(x, ps, st))
     run_JET_tests(m, x, ps, st)
-    test_gradient_correctness_fdm(ps -> sum(first(m(x, ps, st))), ps; atol=1.0f-3,
-                                  rtol=1.0f-3)
+    test_gradient_correctness_fdm(ps -> sum(first(m(x, ps, st))),
+        ps;
+        atol=1.0f-3,
+        rtol=1.0f-3)
 
     for affine in (true, false)
         m = GroupNorm(2, 2; affine, track_stats=false)
@@ -179,11 +194,16 @@ end
         run_JET_tests(m, x, ps, st)
 
         if affine
-            test_gradient_correctness_fdm((x, ps) -> sum(first(m(x, ps, st))), x, ps;
-                                          atol=1.0f-3, rtol=1.0f-3)
+            test_gradient_correctness_fdm((x, ps) -> sum(first(m(x, ps, st))),
+                x,
+                ps;
+                atol=1.0f-3,
+                rtol=1.0f-3)
         else
-            test_gradient_correctness_fdm(x -> sum(first(m(x, ps, st))), x; atol=1.0f-3,
-                                          rtol=1.0f-3)
+            test_gradient_correctness_fdm(x -> sum(first(m(x, ps, st))),
+                x;
+                atol=1.0f-3,
+                rtol=1.0f-3)
         end
 
         # with activation function
@@ -198,11 +218,16 @@ end
         run_JET_tests(m, x, ps, st)
 
         if affine
-            test_gradient_correctness_fdm((x, ps) -> sum(first(m(x, ps, st))), x, ps;
-                                          atol=1.0f-3, rtol=1.0f-3)
+            test_gradient_correctness_fdm((x, ps) -> sum(first(m(x, ps, st))),
+                x,
+                ps;
+                atol=1.0f-3,
+                rtol=1.0f-3)
         else
-            test_gradient_correctness_fdm(x -> sum(first(m(x, ps, st))), x; atol=1.0f-3,
-                                          rtol=1.0f-3)
+            test_gradient_correctness_fdm(x -> sum(first(m(x, ps, st))),
+                x;
+                atol=1.0f-3,
+                rtol=1.0f-3)
         end
 
         m = GroupNorm(32, 16; affine)
@@ -253,8 +278,11 @@ end
         x = randn(rng, Float32, 3, 3, 3, 1)
 
         run_JET_tests(wn, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         wn = WeightNorm(c, (:weight,))
         display(wn)
@@ -262,8 +290,11 @@ end
         x = randn(rng, Float32, 3, 3, 3, 1)
 
         run_JET_tests(wn, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         wn = WeightNorm(c, (:weight, :bias), (2, 2))
         display(wn)
@@ -271,8 +302,11 @@ end
         x = randn(rng, Float32, 3, 3, 3, 1)
 
         run_JET_tests(wn, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         wn = WeightNorm(c, (:weight,), (2,))
         display(wn)
@@ -280,8 +314,11 @@ end
         x = randn(rng, Float32, 3, 3, 3, 1)
 
         run_JET_tests(wn, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
     end
 
     @testset "Dense" begin
@@ -293,8 +330,11 @@ end
         x = randn(rng, Float32, 3, 1)
 
         run_JET_tests(wn, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         wn = WeightNorm(d, (:weight,))
         display(wn)
@@ -302,8 +342,11 @@ end
         x = randn(rng, Float32, 3, 1)
 
         run_JET_tests(wn, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         wn = WeightNorm(d, (:weight, :bias), (2, 2))
         display(wn)
@@ -311,8 +354,11 @@ end
         x = randn(rng, Float32, 3, 1)
 
         run_JET_tests(wn, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
 
         wn = WeightNorm(d, (:weight,), (2,))
         display(wn)
@@ -320,8 +366,11 @@ end
         x = randn(rng, Float32, 3, 1)
 
         run_JET_tests(wn, x, ps, st)
-        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))), x, ps;
-                                      atol=1.0f-3, rtol=1.0f-3)
+        test_gradient_correctness_fdm((x, ps) -> sum(first(wn(x, ps, st))),
+            x,
+            ps;
+            atol=1.0f-3,
+            rtol=1.0f-3)
     end
 
     # See https://github.com/avik-pal/Lux.jl/issues/95
@@ -362,11 +411,16 @@ end
             run_JET_tests(ln, x, ps, st)
 
             if affine
-                test_gradient_correctness_fdm((x, ps) -> sum(first(ln(x, ps, st))), x, ps;
-                                              atol=1.0f-1, rtol=1.0f-1)
+                test_gradient_correctness_fdm((x, ps) -> sum(first(ln(x, ps, st))),
+                    x,
+                    ps;
+                    atol=1.0f-1,
+                    rtol=1.0f-1)
             else
-                test_gradient_correctness_fdm(x -> sum(first(ln(x, ps, st))), x;
-                                              atol=1.0f-1, rtol=1.0f-1)
+                test_gradient_correctness_fdm(x -> sum(first(ln(x, ps, st))),
+                    x;
+                    atol=1.0f-1,
+                    rtol=1.0f-1)
             end
 
             for act in (sigmoid, tanh)
@@ -380,11 +434,16 @@ end
                 run_JET_tests(ln, x, ps, st)
 
                 if affine
-                    test_gradient_correctness_fdm((x, ps) -> sum(first(ln(x, ps, st))), x,
-                                                  ps; atol=1.0f-1, rtol=1.0f-1)
+                    test_gradient_correctness_fdm((x, ps) -> sum(first(ln(x, ps, st))),
+                        x,
+                        ps;
+                        atol=1.0f-1,
+                        rtol=1.0f-1)
                 else
-                    test_gradient_correctness_fdm(x -> sum(first(ln(x, ps, st))), x;
-                                                  atol=1.0f-1, rtol=1.0f-1)
+                    test_gradient_correctness_fdm(x -> sum(first(ln(x, ps, st))),
+                        x;
+                        atol=1.0f-1,
+                        rtol=1.0f-1)
                 end
             end
         end
@@ -399,8 +458,9 @@ end
 end
 
 @testset "InstanceNorm" begin
-    for x in (randn(rng, Float32, 3, 3, 3, 2), randn(rng, Float32, 3, 3, 2),
-              randn(rng, Float32, 3, 3, 3, 3, 2))
+    for x in (randn(rng, Float32, 3, 3, 3, 2),
+        randn(rng, Float32, 3, 3, 2),
+        randn(rng, Float32, 3, 3, 3, 3, 2))
         for affine in (true, false)
             layer = InstanceNorm(3; affine)
             display(layer)
@@ -412,11 +472,16 @@ end
             run_JET_tests(layer, x, ps, st)
 
             if affine
-                test_gradient_correctness_fdm((x, ps) -> sum(first(layer(x, ps, st))), x,
-                                              ps; atol=1.0f-1, rtol=1.0f-1)
+                test_gradient_correctness_fdm((x, ps) -> sum(first(layer(x, ps, st))),
+                    x,
+                    ps;
+                    atol=1.0f-1,
+                    rtol=1.0f-1)
             else
-                test_gradient_correctness_fdm(x -> sum(first(layer(x, ps, st))), x;
-                                              atol=1.0f-1, rtol=1.0f-1)
+                test_gradient_correctness_fdm(x -> sum(first(layer(x, ps, st))),
+                    x;
+                    atol=1.0f-1,
+                    rtol=1.0f-1)
             end
 
             for act in (sigmoid, tanh)
@@ -431,10 +496,15 @@ end
 
                 if affine
                     test_gradient_correctness_fdm((x, ps) -> sum(first(layer(x, ps, st))),
-                                                  x, ps; atol=1.0f-1, rtol=1.0f-1)
+                        x,
+                        ps;
+                        atol=1.0f-1,
+                        rtol=1.0f-1)
                 else
-                    test_gradient_correctness_fdm(x -> sum(first(layer(x, ps, st))), x;
-                                                  atol=1.0f-1, rtol=1.0f-1)
+                    test_gradient_correctness_fdm(x -> sum(first(layer(x, ps, st))),
+                        x;
+                        atol=1.0f-1,
+                        rtol=1.0f-1)
                 end
             end
         end

@@ -6,7 +6,7 @@ AlphaDropout layer.
 ## Arguments
 
   - `p`: Probability of Dropout
-    
+
       + if `p = 0` then [`NoOpLayer`](@ref) is returned.
       + if `p = 1` then `WrappedLayer(Base.Fix1(broadcast, zero))` is returned.
 
@@ -176,8 +176,14 @@ end
 
 function (d::VariationalHiddenDropout)(x, ps, st::NamedTuple)
     _mask = st.mask === nothing ? x : st.mask
-    y, mask, rng = LuxLib.dropout(st.rng, x, _mask, d.p, st.training, st.update_mask;
-                                  invp=d.q, d.dims)
+    y, mask, rng = LuxLib.dropout(st.rng,
+        x,
+        _mask,
+        d.p,
+        st.training,
+        st.update_mask;
+        invp=d.q,
+        d.dims)
     return y, merge(st, (; mask, rng, update_mask=Val(false)))
 end
 

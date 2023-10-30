@@ -1,8 +1,8 @@
 using Lux, Random, Setfield, Test
 
 c = Parallel(+;
-             chain=Chain(; dense_1=Dense(2 => 3), bn=BatchNorm(3), dense_2=Dense(3 => 5)),
-             dense_3=Dense(5 => 1))
+    chain=Chain(; dense_1=Dense(2 => 3), bn=BatchNorm(3), dense_2=Dense(3 => 5)),
+    dense_3=Dense(5 => 1))
 
 rng = Random.default_rng()
 ps, st = Lux.setup(rng, c)

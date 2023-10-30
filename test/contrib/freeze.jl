@@ -39,6 +39,9 @@ end
     @test d(x, psd, std)[1] == fd(x, ps, st)[1]
 
     run_JET_tests(fd, x, ps, st)
-    test_gradient_correctness_fdm((x, ps) -> sum(fd(x, ps, st)[1]), x, ps; atol=1.0f-3,
-                                  rtol=1.0f-3)
+    test_gradient_correctness_fdm((x, ps) -> sum(fd(x, ps, st)[1]),
+        x,
+        ps;
+        atol=1.0f-3,
+        rtol=1.0f-3)
 end

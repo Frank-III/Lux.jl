@@ -16,7 +16,8 @@ Random.seed!(rng, 0)
     gs_r = ReverseDiff.gradient(ps -> sum(first(Lux.apply(c, x, ps, st))), ps)
     gs_z = Zygote.gradient(ps -> sum(first(Lux.apply(c, x, ps, st))), ps)[1]
     gs_fdm = FiniteDifferences.grad(FiniteDifferences.central_fdm(5, 1),
-                                    ps -> sum(first(Lux.apply(c, x, ps, st))), ps)[1]
+        ps -> sum(first(Lux.apply(c, x, ps, st))),
+        ps)[1]
 
     @test gs_r == gs_z
     @test gs_r ≈ gs_fdm
