@@ -11,8 +11,12 @@ end
     return ∇conv_data(copy(x), weight, cdims)
 end
 
-function _conv_transpose_dims(x::AbstractArray, weight::AbstractArray; padding, stride,
-                              dilation, groups)
+function _conv_transpose_dims(x::AbstractArray,
+        weight::AbstractArray;
+        padding,
+        stride,
+        dilation,
+        groups)
     # Calculate size of "input", from ∇conv_data()'s perspective...
     combined_pad = (padding[1:2:end] .+ padding[2:2:end])
     I = (size(x)[1:(end - 2)] .- 1) .* stride .+ 1 .+
@@ -21,8 +25,12 @@ function _conv_transpose_dims(x::AbstractArray, weight::AbstractArray; padding, 
     batch_size = size(x)[end]
     # Create DenseConvDims() that looks like the corresponding conv()
     w_size = size(weight)
-    return DenseConvDims((I..., C_in, batch_size), w_size; stride, padding, dilation,
-                         groups)
+    return DenseConvDims((I..., C_in, batch_size),
+        w_size;
+        stride,
+        padding,
+        dilation,
+        groups)
 end
 
 # Adaptive Pooling

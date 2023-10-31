@@ -82,7 +82,7 @@ Shorthand for getting the parameters and states of the layer `l`. Is equivalent 
 `(initialparameters(rng, l), initialstates(rng, l))`.
 
 !!! warning
-    
+
     This function is not pure, it mutates `rng`.
 """
 function setup(rng::AbstractRNG, l::AbstractExplicitLayer)
@@ -115,7 +115,7 @@ Users implementing their custom layer can extend the same functions as in
 [`AbstractExplicitLayer`](@ref).
 
 !!! tip
-    
+
     Advanced structure manipulation of these layers post construction is possible via
     `Functors.fmap`. For a more flexible interface, we recommend using the experimental
     feature [`Lux.@layer_map`](@ref).
@@ -123,13 +123,13 @@ Users implementing their custom layer can extend the same functions as in
 abstract type AbstractExplicitContainerLayer{layers} <: AbstractExplicitLayer end
 
 function initialparameters(rng::AbstractRNG,
-                           l::AbstractExplicitContainerLayer{layers}) where {layers}
+        l::AbstractExplicitContainerLayer{layers}) where {layers}
     length(layers) == 1 && return initialparameters(rng, getfield(l, layers[1]))
     return NamedTuple{layers}(initialparameters.(rng, getfield.((l,), layers)))
 end
 
 function initialstates(rng::AbstractRNG,
-                       l::AbstractExplicitContainerLayer{layers}) where {layers}
+        l::AbstractExplicitContainerLayer{layers}) where {layers}
     length(layers) == 1 && return initialstates(rng, getfield(l, layers[1]))
     return NamedTuple{layers}(initialstates.(rng, getfield.((l,), layers)))
 end
@@ -144,7 +144,7 @@ end
 
 # Make AbstractExplicit Layers Functor Compatible
 function Functors.functor(::Type{<:AbstractExplicitContainerLayer},
-                          x::AbstractExplicitContainerLayer{layers}) where {layers}
+        x::AbstractExplicitContainerLayer{layers}) where {layers}
     _children = getproperty.((x,), layers)
     function layer_reconstructor(z)
         l = x
@@ -176,8 +176,10 @@ trainmode(st::NamedTuple) = update_state(st, :training, Val(true))
 
 Recursively update all occurances of the `key` in the state `st` with the `value`.
 """
-function update_state(st::NamedTuple, key::Symbol, value;
-                      layer_check=_default_layer_check(key))
+function update_state(st::NamedTuple,
+        key::Symbol,
+        value;
+        layer_check=_default_layer_check(key))
     function _update_state(st, key::Symbol, value)
         return Setfield.set(st, Setfield.PropertyLens{key}(), value)
     end

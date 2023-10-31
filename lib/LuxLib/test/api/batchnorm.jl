@@ -45,19 +45,36 @@ end
             end
 
             Zygote.gradient(sum ∘ first ∘ _f, x, scale, bias, rm, rv)  # Compile
-            @time gs_x, gs_scale, gs_bias, _, _ = Zygote.gradient(sum ∘ first ∘ _f, x,
-                                                                  scale, bias, rm, rv)
+            @time gs_x, gs_scale, gs_bias, _, _ = Zygote.gradient(sum ∘ first ∘ _f,
+                x,
+                scale,
+                bias,
+                rm,
+                rv)
 
             if T != Float16
                 if affine
-                    __f = (args...) -> sum(first(batchnorm(x, args..., rm, rv; epsilon,
-                                                           training, momentum=T(0.9))))
-                    test_gradient_correctness_fdm(__f, scale, bias; atol=1.0f-2,
-                                                  rtol=1.0f-2)
+                    __f = (args...) -> sum(first(batchnorm(x,
+                        args...,
+                        rm,
+                        rv;
+                        epsilon,
+                        training,
+                        momentum=T(0.9))))
+                    test_gradient_correctness_fdm(__f,
+                        scale,
+                        bias;
+                        atol=1.0f-2,
+                        rtol=1.0f-2)
                 else
-                    __f = (args...) -> sum(first(batchnorm(args..., scale, bias, rm, rv;
-                                                           epsilon, training,
-                                                           momentum=T(0.9))))
+                    __f = (args...) -> sum(first(batchnorm(args...,
+                        scale,
+                        bias,
+                        rm,
+                        rv;
+                        epsilon,
+                        training,
+                        momentum=T(0.9))))
                     test_gradient_correctness_fdm(__f, x; atol=1.0f-2, rtol=1.0f-2)
                 end
             end
@@ -101,8 +118,12 @@ end
             end
 
             Zygote.gradient(sum ∘ first ∘ _f, x, scale, bias, rm, rv)  # Compile
-            CUDA.@time gs_x, gs_scale, gs_bias, _, _ = Zygote.gradient(sum ∘ first ∘ _f, x,
-                                                                       scale, bias, rm, rv)
+            CUDA.@time gs_x, gs_scale, gs_bias, _, _ = Zygote.gradient(sum ∘ first ∘ _f,
+                x,
+                scale,
+                bias,
+                rm,
+                rv)
 
             # if T != Float16
             #     if affine

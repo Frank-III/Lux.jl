@@ -148,8 +148,13 @@ end
             # Update mask
             @inferred dropout(rng, x, mask, T(0.5), Val(true), Val(true); dims=Colon())
 
-            y, mask_, rng_ = dropout(rng, x, mask, T(0.5), Val(true), Val(true);
-                                     dims=Colon())
+            y, mask_, rng_ = dropout(rng,
+                x,
+                mask,
+                T(0.5),
+                Val(true),
+                Val(true);
+                dims=Colon())
 
             @test y isa Array{T, length(x_shape)}
             @test size(y) == x_shape
@@ -158,15 +163,25 @@ end
             @test rng != rng_
             @test mask != mask_
 
-            __f = x -> sum(first(dropout(rng, x, mask, T(0.5), Val(true), Val(true);
-                                         dims=Colon())))
+            __f = x -> sum(first(dropout(rng,
+                x,
+                mask,
+                T(0.5),
+                Val(true),
+                Val(true);
+                dims=Colon())))
             test_gradient_correctness_fdm(__f, x; atol=1.0f-2, rtol=1.0f-2)
 
             # Try using mask if possible (possible!!)
             @inferred dropout(rng, x, mask, T(0.5), Val(true), Val(false); dims=Colon())
 
-            y, mask_, rng_ = dropout(rng, x, mask, T(0.5), Val(true), Val(false);
-                                     dims=Colon())
+            y, mask_, rng_ = dropout(rng,
+                x,
+                mask,
+                T(0.5),
+                Val(true),
+                Val(false);
+                dims=Colon())
 
             @test y isa Array{T, length(x_shape)}
             @test size(y) == x_shape
@@ -175,8 +190,13 @@ end
             @test rng == rng_
             @test mask == mask_
 
-            __f = x -> sum(first(dropout(rng, x, mask, T(0.5), Val(true), Val(false);
-                                         dims=Colon())))
+            __f = x -> sum(first(dropout(rng,
+                x,
+                mask,
+                T(0.5),
+                Val(true),
+                Val(false);
+                dims=Colon())))
             test_gradient_correctness_fdm(__f, x; atol=1.0f-2, rtol=1.0f-2)
 
             mask = rand(T, (x_shape[1:(end - 1)]..., 13))
@@ -184,8 +204,13 @@ end
             # Try using mask if possible (not possible!!)
             @inferred dropout(rng, x, mask, T(0.5), Val(true), Val(false); dims=Colon())
 
-            y, mask_, rng_ = dropout(rng, x, mask, T(0.5), Val(true), Val(false);
-                                     dims=Colon())
+            y, mask_, rng_ = dropout(rng,
+                x,
+                mask,
+                T(0.5),
+                Val(true),
+                Val(false);
+                dims=Colon())
 
             @test y isa Array{T, length(x_shape)}
             @test size(y) == x_shape
@@ -194,15 +219,25 @@ end
             @test rng != rng_
             @test mask != mask_
 
-            __f = x -> sum(first(dropout(rng, x, mask, T(0.5), Val(true), Val(false);
-                                         dims=Colon())))
+            __f = x -> sum(first(dropout(rng,
+                x,
+                mask,
+                T(0.5),
+                Val(true),
+                Val(false);
+                dims=Colon())))
             test_gradient_correctness_fdm(__f, x; atol=1.0f-2, rtol=1.0f-2)
 
             # Testing Mode
             @inferred dropout(rng, x, mask, T(0.5), Val(false), Val(false); dims=Colon())
 
-            y, mask_, rng_ = dropout(rng, x, mask, T(0.5), Val(false), Val(false);
-                                     dims=Colon())
+            y, mask_, rng_ = dropout(rng,
+                x,
+                mask,
+                T(0.5),
+                Val(false),
+                Val(false);
+                dims=Colon())
 
             @test y isa Array{T, length(x_shape)}
             @test size(y) == x_shape
@@ -224,8 +259,13 @@ end
             # Update mask
             @inferred dropout(rng, x, mask, T(0.5), Val(true), Val(true); dims=Colon())
 
-            y, mask_, rng_ = dropout(rng, x, mask, T(0.5), Val(true), Val(true);
-                                     dims=Colon())
+            y, mask_, rng_ = dropout(rng,
+                x,
+                mask,
+                T(0.5),
+                Val(true),
+                Val(true);
+                dims=Colon())
 
             @test y isa CuArray{T, length(x_shape)}
             @test size(y) == x_shape
@@ -240,8 +280,13 @@ end
             # Try using mask if possible (possible!!)
             @inferred dropout(rng, x, mask, T(0.5), Val(true), Val(false); dims=Colon())
 
-            y, mask_, rng_ = dropout(rng, x, mask, T(0.5), Val(true), Val(false);
-                                     dims=Colon())
+            y, mask_, rng_ = dropout(rng,
+                x,
+                mask,
+                T(0.5),
+                Val(true),
+                Val(false);
+                dims=Colon())
 
             @test y isa CuArray{T, length(x_shape)}
             @test size(y) == x_shape
@@ -258,8 +303,13 @@ end
             # Try using mask if possible (not possible!!)
             @inferred dropout(rng, x, mask, T(0.5), Val(true), Val(false); dims=Colon())
 
-            y, mask_, rng_ = dropout(rng, x, mask, T(0.5), Val(true), Val(false);
-                                     dims=Colon())
+            y, mask_, rng_ = dropout(rng,
+                x,
+                mask,
+                T(0.5),
+                Val(true),
+                Val(false);
+                dims=Colon())
 
             @test y isa CuArray{T, length(x_shape)}
             @test size(y) == x_shape
@@ -274,8 +324,13 @@ end
             # Testing Mode
             @inferred dropout(rng, x, mask, T(0.5), Val(false), Val(false); dims=Colon())
 
-            y, mask_, rng_ = dropout(rng, x, mask, T(0.5), Val(false), Val(false);
-                                     dims=Colon())
+            y, mask_, rng_ = dropout(rng,
+                x,
+                mask,
+                T(0.5),
+                Val(false),
+                Val(false);
+                dims=Colon())
 
             @test y isa CuArray{T, length(x_shape)}
             @test size(y) == x_shape

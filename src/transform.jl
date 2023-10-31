@@ -6,7 +6,7 @@ import .Flux
 Convert a Flux Model to Lux Model.
 
 !!! tip
-    
+
     It is recommended to use the package `Flux2Lux` instead of this function. It supports
     convertion of a wider variation of Flux models.
 
@@ -27,7 +27,8 @@ m2(x, ps, st)
 """
 function transform(x)
     Base.depwarn("`Lux.transform` has been deprecated in favor of the package `Flux2Lux`." *
-                 "This function will be removed in v0.5", :transform)
+                 "This function will be removed in v0.5",
+        :transform)
     return _transform(x)
 end
 
@@ -36,17 +37,24 @@ _transform(::T) where {T} = error("Transformation for type $T not implemented")
 _transform(model::Flux.Chain) = Chain(_transform.(model.layers)...)
 
 function _transform(model::Flux.BatchNorm)
-    return BatchNorm(model.chs, model.λ; affine=model.affine, track_stats=model.track_stats,
-                     epsilon=model.ϵ, momentum=model.momentum)
+    return BatchNorm(model.chs,
+        model.λ;
+        affine=model.affine,
+        track_stats=model.track_stats,
+        epsilon=model.ϵ,
+        momentum=model.momentum)
 end
 
 function _transform(model::Flux.Conv)
     in_chs = size(model.weight, ndims(model.weight) - 1) * model.groups
     return Conv(size(model.weight)[1:(end - 2)],
-                in_chs => size(model.weight, ndims(model.weight)), model.σ;
-                stride=model.stride, pad=model.pad,
-                bias=model.bias isa Bool ? model.bias : !(model.bias isa Flux.Zeros),
-                dilation=model.dilation, groups=model.groups)
+        in_chs => size(model.weight, ndims(model.weight)),
+        model.σ;
+        stride=model.stride,
+        pad=model.pad,
+        bias=model.bias isa Bool ? model.bias : !(model.bias isa Flux.Zeros),
+        dilation=model.dilation,
+        groups=model.groups)
 end
 
 function _transform(model::Flux.SkipConnection)

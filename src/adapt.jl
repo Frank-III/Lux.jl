@@ -9,15 +9,19 @@ adapt_storage(::LuxCUDAAdaptor, x::Zygote.OneElement) = CUDA.cu(collect(x))
 adapt_storage(::LuxCUDAAdaptor, rng::AbstractRNG) = rng
 
 function adapt_storage(::LuxCPUAdaptor,
-                       x::Union{AbstractRange, FillArrays.AbstractFill, Zygote.OneElement,
-                                SparseArrays.AbstractSparseArray})
+        x::Union{
+            AbstractRange,
+            FillArrays.AbstractFill,
+            Zygote.OneElement,
+            SparseArrays.AbstractSparseArray,
+        })
     return x
 end
 adapt_storage(::LuxCPUAdaptor, x::AbstractArray) = adapt(Array, x)
 adapt_storage(::LuxCPUAdaptor, rng::AbstractRNG) = rng
 # TODO(@avik-pal): SparseArrays
 function adapt_storage(::LuxCPUAdaptor,
-                       x::CUDA.CUSPARSE.CUDA.CUSPARSE.AbstractCuSparseMatrix)
+        x::CUDA.CUSPARSE.CUDA.CUSPARSE.AbstractCuSparseMatrix)
     return adapt(Array, x)
 end
 

@@ -27,7 +27,7 @@ using LuxCore, Random, Test
 
     @testset "update_state" begin
         st = (layer_1=(training=Val(true), val=1),
-              layer_2=(layer_1=(val=2,), layer_2=(training=Val(true),)))
+            layer_2=(layer_1=(val=2,), layer_2=(training=Val(true),)))
 
         st_ = LuxCore.testmode(st)
 

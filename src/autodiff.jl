@@ -14,12 +14,12 @@ ChainRulesCore.@non_differentiable _conv_transpose_dims(::Any...)
 ChainRulesCore.@non_differentiable _calc_padding(::Any...)
 
 # Utilities
-function ChainRulesCore.rrule(::typeof(merge), nt1::NamedTuple{F1},
-                              nt2::NamedTuple{F2}) where {F1, F2}
+function ChainRulesCore.rrule(::typeof(merge),
+        nt1::NamedTuple{F1},
+        nt2::NamedTuple{F2}) where {F1, F2}
     y = merge(nt1, nt2)
     function merge_pullback(dy)
-        dnt1 = NamedTuple((f1 => (f1 in F2 ? NoTangent() : getproperty(dy, f1))
-                           for f1 in F1))
+        dnt1 = NamedTuple((f1 => (f1 in F2 ? NoTangent() : getproperty(dy, f1)) for f1 in F1))
         dnt2 = NamedTuple((f2 => getproperty(dy, f2) for f2 in F2))
         return (NoTangent(), dnt1, dnt2)
     end
@@ -58,15 +58,16 @@ function ChainRulesCore.rrule(::Type{Array}, x::CUDA.CuArray)
     return Array(x), d -> (NoTangent(), CUDA.cu(d))
 end
 
-function ChainRulesCore.rrule(::typeof(adapt_storage), to::LuxCPUAdaptor,
-                              x::CUDA.AbstractGPUArray)
+function ChainRulesCore.rrule(::typeof(adapt_storage),
+        to::LuxCPUAdaptor,
+        x::CUDA.AbstractGPUArray)
     return adapt_storage(to, x),
-           d -> (NoTangent(), NoTangent(), adapt_storage(LuxCUDAAdaptor(), d))
+    d -> (NoTangent(), NoTangent(), adapt_storage(LuxCUDAAdaptor(), d))
 end
 
 function ChainRulesCore.rrule(::typeof(adapt_storage), to::LuxCUDAAdaptor, x::Array)
     return adapt_storage(to, x),
-           d -> (NoTangent(), NoTangent(), adapt_storage(LuxCPUAdaptor(), d))
+    d -> (NoTangent(), NoTangent(), adapt_storage(LuxCPUAdaptor(), d))
 end
 
 # RNN Helpers

@@ -21,8 +21,11 @@ else
 end
 
 @testset "Device Transfer" begin
-    ps = (a=(c=zeros(10, 1), d=1), b=ones(10, 1), e=:c, d="string",
-          rng=Random.default_rng())
+    ps = (a=(c=zeros(10, 1), d=1),
+        b=ones(10, 1),
+        e=:c,
+        d="string",
+        rng=Random.default_rng())
 
     ps_gpu = ps |> gpu
     @test ps_gpu.a.c isa CuArray

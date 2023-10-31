@@ -44,11 +44,17 @@ end
 
             if T != Float16 # FDM is not ideal with Float16 values
                 if affine_shape === nothing
-                    test_gradient_correctness_fdm(x -> sum(_f(x, nothing, nothing)), x;
-                                                  atol=1.0f-2, rtol=1.0f-2)
+                    test_gradient_correctness_fdm(x -> sum(_f(x, nothing, nothing)),
+                        x;
+                        atol=1.0f-2,
+                        rtol=1.0f-2)
                 else
-                    test_gradient_correctness_fdm(sum ∘ _f, x, scale, bias; atol=1.0f-2,
-                                                  rtol=1.0f-2)
+                    test_gradient_correctness_fdm(sum ∘ _f,
+                        x,
+                        scale,
+                        bias;
+                        atol=1.0f-2,
+                        rtol=1.0f-2)
                 end
             end
         end

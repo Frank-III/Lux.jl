@@ -77,8 +77,12 @@ SelectDim(dim, index) = SelectDim{Val(dim), Val(index)}()
 end
 
 function Base.show(io::IO, s::SelectDim{dim, index}) where {dim, index}
-    return print(io, "SelectDim(dim = ", get_known(dim), ", index = ", get_known(index),
-                 ")")
+    return print(io,
+        "SelectDim(dim = ",
+        get_known(dim),
+        ", index = ",
+        get_known(index),
+        ")")
 end
 
 """
@@ -174,21 +178,36 @@ function Base.show(io::IO, d::Dense{use_bias}) where {use_bias}
     return print(io, ")")
 end
 
-function Dense(mapping::Pair{<:Int, <:Int}, activation=identity; init_weight=glorot_uniform,
-               init_bias=zeros32, use_bias::Bool=true, bias::Union{Missing, Bool}=missing)
-    return Dense(first(mapping), last(mapping), activation; init_weight, init_bias,
-                 use_bias, bias)
+function Dense(mapping::Pair{<:Int, <:Int},
+        activation=identity;
+        init_weight=glorot_uniform,
+        init_bias=zeros32,
+        use_bias::Bool=true,
+        bias::Union{Missing, Bool}=missing)
+    return Dense(first(mapping),
+        last(mapping),
+        activation;
+        init_weight,
+        init_bias,
+        use_bias,
+        bias)
 end
 
-function Dense(in_dims::Int, out_dims::Int, activation=identity; init_weight=glorot_uniform,
-               init_bias=zeros32, use_bias::Bool=true, bias::Union{Missing, Bool}=missing,
-               allow_fast_activation::Bool=true)
+function Dense(in_dims::Int,
+        out_dims::Int,
+        activation=identity;
+        init_weight=glorot_uniform,
+        init_bias=zeros32,
+        use_bias::Bool=true,
+        bias::Union{Missing, Bool}=missing,
+        allow_fast_activation::Bool=true)
     activation = allow_fast_activation ? NNlib.fast_act(activation) : activation
 
     # Deprecated Functionality (Remove in v0.5)
     if !ismissing(bias)
         Base.depwarn("`bias` argument to `Dense` has been deprecated and will be removed" *
-                     " in v0.5. Use `use_bias` kwarg instead.", :Dense)
+                     " in v0.5. Use `use_bias` kwarg instead.",
+            :Dense)
         if !use_bias
             throw(ArgumentError("Both `bias` and `use_bias` are set. Please only use " *
                                 "the `use_bias` keyword argument."))
@@ -203,7 +222,7 @@ end
 function initialparameters(rng::AbstractRNG, d::Dense{use_bias}) where {use_bias}
     if use_bias
         return (weight=d.init_weight(rng, d.out_dims, d.in_dims),
-                bias=d.init_bias(rng, d.out_dims, 1))
+            bias=d.init_bias(rng, d.out_dims, 1))
     else
         return (weight=d.init_weight(rng, d.out_dims, d.in_dims),)
     end
@@ -218,8 +237,9 @@ statelength(d::Dense) = 0
     return d.activation.(ps.weight * x), st
 end
 
-@inline function (d::Dense{false, typeof(identity)})(x::AbstractVecOrMat, ps,
-                                                     st::NamedTuple)
+@inline function (d::Dense{false, typeof(identity)})(x::AbstractVecOrMat,
+        ps,
+        st::NamedTuple)
     return ps.weight * x, st
 end
 
@@ -254,8 +274,10 @@ end
 @inline function (d::Dense{true})(x::AbstractArray, ps, st::NamedTuple)
     sz = size(x)
     x_reshaped = reshape(x, sz[1], :)
-    return (reshape(d.activation.(ps.weight * x_reshaped .+ ps.bias), d.out_dims,
-                    sz[2:end]...), st)
+    return (reshape(d.activation.(ps.weight * x_reshaped .+ ps.bias),
+            d.out_dims,
+            sz[2:end]...),
+        st)
 end
 
 @inline function (d::Dense{true, typeof(identity)})(x::AbstractArray, ps, st::NamedTuple)
@@ -301,7 +323,7 @@ Elements are non-zero). The forward pass is given by: `y = activation.(weight .*
   - `bias`: Bias of size `(dims...)`
 
 !!! compat "Lux 0.4.3"
-    
+
     `Scale` with multiple dimensions requires at least Lux 0.4.3.
 """
 struct Scale{use_bias, F1, D, F2, F3} <: AbstractExplicitLayer
@@ -317,15 +339,20 @@ function Base.show(io::IO, d::Scale)
     return print(io, ")")
 end
 
-function Scale(dims::Tuple{Vararg{Integer}}, activation=identity;
-               init_weight=glorot_uniform, init_bias=zeros32, use_bias::Bool=true,
-               bias::Union{Missing, Bool}=missing, allow_fast_activation::Bool=true)
+function Scale(dims::Tuple{Vararg{Integer}},
+        activation=identity;
+        init_weight=glorot_uniform,
+        init_bias=zeros32,
+        use_bias::Bool=true,
+        bias::Union{Missing, Bool}=missing,
+        allow_fast_activation::Bool=true)
     activation = allow_fast_activation ? NNlib.fast_act(activation) : activation
 
     # Deprecated Functionality (Remove in v0.5)
     if !ismissing(bias)
         Base.depwarn("`bias` argument to `Scale` has been deprecated and will be removed" *
-                     " in v0.5. Use `use_bias` kwarg instead.", :Scale)
+                     " in v0.5. Use `use_bias` kwarg instead.",
+            :Scale)
         if !use_bias
             throw(ArgumentError("Both `bias` and `use_bias` are set. Please only use " *
                                 "the `use_bias` keyword argument."))
@@ -333,8 +360,16 @@ function Scale(dims::Tuple{Vararg{Integer}}, activation=identity;
         use_bias = bias
     end
 
-    return Scale{use_bias, typeof(activation), typeof(dims), typeof(init_weight),
-                 typeof(init_bias)}(activation, dims, init_weight, init_bias)
+    return Scale{
+        use_bias,
+        typeof(activation),
+        typeof(dims),
+        typeof(init_weight),
+        typeof(init_bias),
+    }(activation,
+        dims,
+        init_weight,
+        init_bias)
 end
 
 function Scale(s1::Integer, s23::Integer...; _act=identity, kw...)
@@ -405,7 +440,7 @@ with `B` the Bilinear layer.
 ## Input
 
   - A 2-Tuple containing
-    
+
       + `x` must be an AbstractArray with `size(x, 1) == in1_dims`
       + `y` must be an AbstractArray with `size(x, 1) == in2_dims`
 
@@ -438,21 +473,25 @@ function Base.show(io::IO, b::Bilinear{use_bias}) where {use_bias}
 end
 
 function Bilinear(((in1_dims, in2_dims), out)::Pair{<:Tuple, <:Integer},
-                  activation=identity; init_weight=glorot_uniform, init_bias=zeros32,
-                  use_bias::Bool=true, allow_fast_activation::Bool=true)
+        activation=identity;
+        init_weight=glorot_uniform,
+        init_bias=zeros32,
+        use_bias::Bool=true,
+        allow_fast_activation::Bool=true)
     activation = allow_fast_activation ? NNlib.fast_act(activation) : activation
     _types = (use_bias, typeof(activation), typeof(init_weight), typeof(init_bias))
     return Bilinear{_types...}(activation, in1_dims, in2_dims, out, init_weight, init_bias)
 end
-function Bilinear((in12_dims, out)::Pair{<:Integer, <:Integer}, activation=identity;
-                  kwargs...)
+function Bilinear((in12_dims, out)::Pair{<:Integer, <:Integer},
+        activation=identity;
+        kwargs...)
     return Bilinear((in12_dims, in12_dims) => out, activation; kwargs...)
 end
 
 function initialparameters(rng::AbstractRNG, b::Bilinear{use_bias}) where {use_bias}
     if use_bias
         return (weight=b.init_weight(rng, b.out_dims, b.in1_dims, b.in2_dims),
-                bias=b.init_bias(rng, b.out_dims, 1))
+            bias=b.init_bias(rng, b.out_dims, 1))
     else
         return (weight=b.init_weight(rng, b.out_dims, b.in1_dims, b.in2_dims),)
     end
@@ -463,8 +502,9 @@ function parameterlength(b::Bilinear{use_bias}) where {use_bias}
 end
 statelength(b::Bilinear) = 0
 
-function (b::Bilinear{use_bias})((x, y)::Tuple{<:AbstractArray, <:AbstractArray}, ps,
-                                 st::NamedTuple) where {use_bias}
+function (b::Bilinear{use_bias})((x, y)::Tuple{<:AbstractArray, <:AbstractArray},
+        ps,
+        st::NamedTuple) where {use_bias}
     d_z, d_x, d_y = size(ps.weight)
     if d_x != size(x, 1) || d_y != size(y, 1)
         throw(DimensionMismatch("number of rows in data must match `ps.weight`"))
@@ -495,7 +535,7 @@ A lookup table that stores embeddings of dimension `out_dims` for a vocabulary o
 This layer is often used to store word embeddings and retrieve them using indices.
 
 !!! warning
-    
+
     Unlike `Flux.Embedding`, this layer does not support using `OneHotArray` as an input.
 
 ## Arguments

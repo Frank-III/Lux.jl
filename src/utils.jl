@@ -139,9 +139,11 @@ Method undefined if `st.training` is not of type `Val`.
 @inline istraining(st::NamedTuple) = hasproperty(st, :training) && istraining(st.training)
 
 # Convolution
-function _convfilter(rng::AbstractRNG, filter::NTuple{N, Integer},
-                     ch::Pair{<:Integer, <:Integer}; init=glorot_uniform,
-                     groups=1) where {N}
+function _convfilter(rng::AbstractRNG,
+        filter::NTuple{N, Integer},
+        ch::Pair{<:Integer, <:Integer};
+        init=glorot_uniform,
+        groups=1) where {N}
     cin, cout = ch
     @assert cin % groups==0 "Input channel dimension must be divisible by groups."
     @assert cout % groups==0 "Output channel dimension must be divisible by groups."
@@ -174,7 +176,7 @@ end
 # Handling ComponentArrays
 function Functors.functor(::Type{<:ComponentArray}, c)
     return NamedTuple{propertynames(c)}(getproperty.((c,), propertynames(c))),
-           ComponentArray
+    ComponentArray
 end
 
 Optimisers.setup(opt::AbstractRule, ps::ComponentArray) = Optimisers.setup(opt, getdata(ps))
@@ -201,13 +203,14 @@ get_typename(::T) where {T} = Base.typename(T).wrapper
     return rnn.init_state(rng, rnn.out_dims, size(x, 2))
 end
 
-@inline function _init_hidden_state(rng::AbstractRNG, rnn,
-                                    x::Union{CUDA.StridedSubCuArray, CuArray})
+@inline function _init_hidden_state(rng::AbstractRNG,
+        rnn,
+        x::Union{CUDA.StridedSubCuArray, CuArray})
     return CuArray(rnn.init_state(rng, rnn.out_dims, size(x, 2)))
 end
 
 @inline function _init_trainable_hidden_state(hidden_state::AbstractVector,
-                                              x::AbstractMatrix)
+        x::AbstractMatrix)
     return repeat(hidden_state, 1, size(x, 2))
 end
 

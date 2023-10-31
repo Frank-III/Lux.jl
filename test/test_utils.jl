@@ -21,8 +21,9 @@ function Base.isapprox(x::Optimisers.Leaf, y::Optimisers.Leaf; kwargs...)
     return isapprox(x.rule, y.rule; kwargs...) && isapprox(x.state, y.state; kwargs...)
 end
 
-function Base.isapprox(nt1::NamedTuple{fields}, nt2::NamedTuple{fields};
-                       kwargs...) where {fields}
+function Base.isapprox(nt1::NamedTuple{fields},
+        nt2::NamedTuple{fields};
+        kwargs...) where {fields}
     checkapprox(xy) = isapprox(xy[1], xy[2]; kwargs...)
     checkapprox(t::Tuple{Nothing, Nothing}) = true
     return all(checkapprox, zip(values(nt1), values(nt2)))
@@ -43,8 +44,9 @@ _named_tuple(x) = x
 
 function test_gradient_correctness_fdm(f::Function, args...; kwargs...)
     gs_ad = Zygote.gradient(f, args...)
-    gs_fdm = FiniteDifferences.grad(FiniteDifferences.central_fdm(5, 1), f,
-                                    ComponentArray.(args)...)
+    gs_fdm = FiniteDifferences.grad(FiniteDifferences.central_fdm(5, 1),
+        f,
+        ComponentArray.(args)...)
     gs_fdm = _named_tuple.(gs_fdm)
     for (g_ad, g_fdm) in zip(gs_ad, gs_fdm)
         @test isapprox(g_ad, g_fdm; kwargs...)
